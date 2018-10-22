@@ -97,7 +97,7 @@
         <div class="container">
             <!-- Navbar Brand -->
             <div class="navbar-header d-flex align-items-center justify-content-between">
-                <!-- Navbar Brand --><a href="index.html" class="navbar-brand"><strong style="font-size:2rem;">SocAIty</strong>  Developers</a>
+                <!-- Navbar Brand --><a href="{% url 'home' %}" class="navbar-brand"><strong style="font-size:2rem;">SocAIty</strong>  Developers</a>
 
                 <!-- Toggle Button-->
                 <button type="button" data-toggle="collapse" data-target="#navbarcollapse"
@@ -237,7 +237,7 @@
 
     </section>
 
-	<a class="scrollup" style="display: none;">Scroll</a>
+	<a class="scrollup" style="display: none;"></a>
 
 </div>
 <script src="https://d19m59y37dris4.cloudfront.net/blog/1-2/vendor/jquery/jquery.min.js"></script>
@@ -282,6 +282,7 @@
 <script>
     blog_like_status = false;
     like_heart_icon = document.getElementById('like_heart_icon');
+    current_upvotes = {{ blog.upvotes }}
     likes_count = document.getElementById('likes_number');
     window.onload = function () {
         $.ajax({
@@ -314,7 +315,8 @@
 
             blog_like_status = true;
             like_heart_icon.innerHTML = '<i class="fas fa-heart text-red"></i>'
-            likes_count.innerText = {{ blog.upvotes }} +1
+            current_upvotes = current_upvotes+1;
+            likes_count.innerText = current_upvotes;
             $.ajax({
                 type: 'POST',
                 url: "{% url 'blog:like_blog' %}",
@@ -328,6 +330,24 @@
                 }
             });
 
+        }
+        else {
+            blog_like_status = false;
+            like_heart_icon.innerHTML = '<i class="far fa-heart text-red"></i>';
+            current_upvotes = current_upvotes-1;
+            likes_count.innerText = current_upvotes;
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'blog:unlike blog' %}",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'blog_id': {{ blog.id }},
+
+                },
+                success: function (result) {
+
+                }
+            });
         }
     };
 </script>
